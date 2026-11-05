@@ -1,0 +1,6 @@
+{
+  "name": "EPSS STRATEX",
+  "description": "Ethiopian Pharmaceutical Supply Service (Addis Ababa 2) Strategic Action Plan Tracker, Real-Time Executive Monitoring, KPIs, and Departmental Governance System.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

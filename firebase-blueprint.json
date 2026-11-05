@@ -1,0 +1,165 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "EPSS STRATEX authenticated user profile and permissions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "username": { "type": "string" },
+        "fullName": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "role": { "type": "string", "enum": ["SUPER_ADMIN", "RESTRICTED_ADMIN", "DEPARTMENT_COORDINATOR", "DEPARTMENT_USER"] },
+        "departmentId": { "type": "string" },
+        "departmentName": { "type": "string" },
+        "jobTitle": { "type": "string" },
+        "requiresPasswordChange": { "type": "boolean" },
+        "passwordHash": { "type": "string" },
+        "salt": { "type": "string" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "username", "fullName", "role", "departmentId", "departmentName", "passwordHash", "salt", "isActive"]
+    },
+    "ActionPlan": {
+      "title": "ActionPlan",
+      "description": "Department action plan items, progress, evidence, and audit decisions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "departmentId": { "type": "string" },
+        "departmentName": { "type": "string" },
+        "responsiblePerson": { "type": "string" },
+        "assignedDate": { "type": "string" },
+        "targetCompletionDate": { "type": "string" },
+        "reportingPeriod": { "type": "string" },
+        "priority": { "type": "string", "enum": ["High", "Medium", "Low"] },
+        "status": { "type": "string", "enum": ["Not Started", "In Progress", "Submitted for Review", "Completed", "Returned for Revision"] },
+        "progressPercentage": { "type": "number" },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "title", "departmentId", "responsiblePerson", "status", "priority", "progressPercentage"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "User-authored communication messages in internal chatroom",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "senderRole": { "type": "string" },
+        "senderDepartment": { "type": "string" },
+        "message": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["id", "senderId", "senderName", "message", "timestamp"]
+    },
+    "ArchiveDocument": {
+      "title": "ArchiveDocument",
+      "description": "Archived official pharmaceutical documents, SOPs, and guidelines",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "fileName": { "type": "string" },
+        "fileSize": { "type": "number" },
+        "fileType": { "type": "string" },
+        "uploadedBy": { "type": "string" },
+        "uploadedByName": { "type": "string" },
+        "uploadedAt": { "type": "string" },
+        "accessLevel": { "type": "string" }
+      },
+      "required": ["id", "title", "category", "fileName", "uploadedAt"]
+    },
+    "MeetingMinute": {
+      "title": "MeetingMinute",
+      "description": "Executive management meeting minutes and decisions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "meetingDate": { "type": "string" },
+        "location": { "type": "string" },
+        "chairperson": { "type": "string" },
+        "secretary": { "type": "string" },
+        "discussionSummary": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "createdBy": { "type": "string" }
+      },
+      "required": ["id", "title", "meetingDate", "chairperson", "secretary", "createdAt"]
+    },
+    "KPI": {
+      "title": "KPI",
+      "description": "Organizational and departmental key performance indicators",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "definition": { "type": "string" },
+        "departmentId": { "type": "string" },
+        "departmentName": { "type": "string" },
+        "target": { "type": "number" },
+        "actualResult": { "type": "number" },
+        "unitOfMeasure": { "type": "string" },
+        "reportingFrequency": { "type": "string" },
+        "reportingPeriod": { "type": "string" },
+        "dataSource": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "name", "target", "actualResult", "departmentId", "status"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Immutable security and operational event log",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userRole": { "type": "string" },
+        "actionType": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "required": ["id", "timestamp", "userId", "userName", "actionType", "description"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles and encrypted credentials"
+    },
+    "/action_plans/{planId}": {
+      "schema": "ActionPlan",
+      "description": "Action plans, progress, and review audit history"
+    },
+    "/chat_messages/{messageId}": {
+      "schema": "ChatMessage",
+      "description": "User-authored real-time chat messages"
+    },
+    "/archives/{archiveId}": {
+      "schema": "ArchiveDocument",
+      "description": "Institutional archive documents metadata"
+    },
+    "/meeting_minutes/{minuteId}": {
+      "schema": "MeetingMinute",
+      "description": "Executive meeting minutes and tracked decisions"
+    },
+    "/kpis/{kpiId}": {
+      "schema": "KPI",
+      "description": "Performance indicator metrics"
+    },
+    "/audit_logs/{logId}": {
+      "schema": "AuditLog",
+      "description": "Tamper-evident system activity and workflow audit entries"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "id": "/",
+  "name": "EPSS STRATEX - Ethiopian Pharmaceutical Supply Service",
+  "short_name": "STRATEX",
+  "description": "Executive Action Plan Tracker & Monitoring System for Ethiopian Pharmaceutical Supply Service (EPSS AA2).",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#0284c7",
+  "background_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/public/assets/aistudio/IMG-20261105-WA0001_9d4bea79.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/public/assets/aistudio/IMG-20261105-WA0001_9d4bea79.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
