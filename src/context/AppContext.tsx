@@ -29,6 +29,7 @@ import {
   INITIAL_AUDIT_LOGS 
 } from '../data/seedData';
 import { hashPassword, generateSalt } from '../utils/crypto';
+import { readRecords, replaceRecords } from '../services/database';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -218,6 +219,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         localStorage.setItem(`${STORAGE_KEY_PREFIX}app_tiles`, JSON.stringify([]));
       }
 
+      // Prefer the shared Firestore database when records already exist. If it is
+      // empty, the existing browser data is retained and migrated by the sync effects.
+      try {
+        const [cloudUsers, cloudPlans, cloudArchives, cloudMinutes, cloudKpis, cloudLogs, cloudChat, cloudTiles] = await Promise.all([
+          readRecords<User>('users'),
+          readRecords<ActionPlanItem>('action_plans'),
+          readRecords<ArchiveFile>('archives'),
+          readRecords<MeetingMinute>('meeting_minutes'),
+          readRecords<KPIItem>('kpis'),
+          readRecords<AuditLogEntry>('audit_logs'),
+          readRecords<ChatMessage>('chat_messages'),
+          readRecords<import('../types').CustomAppTile>('app_tiles')
+        ]);
+        if (cloudUsers.length) setUsers(cloudUsers);
+        if (cloudPlans.length) setActionPlans(cloudPlans);
+        if (cloudArchives.length) setArchives(cloudArchives);
+        if (cloudMinutes.length) setMeetingMinutes(cloudMinutes);
+        if (cloudKpis.length) setKpis(cloudKpis);
+        if (cloudLogs.length) setAuditLogs(cloudLogs);
+        if (cloudChat.length) setChatMessages(cloudChat);
+        if (cloudTiles.length) setAppTiles(cloudTiles);
+      } catch (error) {
+        console.error('Could not load shared Firestore data; continuing with local cache.', error);
+      }
+
       setIsInitialized(true);
     }
 
@@ -228,36 +254,43 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     if (!isInitialized) return;
     localStorage.setItem(`${STORAGE_KEY_PREFIX}users`, JSON.stringify(users));
+    void replaceRecords('users', users).catch(error => console.error('Firestore users sync failed:', error));
   }, [users, isInitialized]);
 
   useEffect(() => {
     if (!isInitialized) return;
     localStorage.setItem(`${STORAGE_KEY_PREFIX}action_plans`, JSON.stringify(actionPlans));
+    void replaceRecords('action_plans', actionPlans).catch(error => console.error('Firestore action plans sync failed:', error));
   }, [actionPlans, isInitialized]);
 
   useEffect(() => {
     if (!isInitialized) return;
     localStorage.setItem(`${STORAGE_KEY_PREFIX}archives`, JSON.stringify(archives));
+    void replaceRecords('archives', archives).catch(error => console.error('Firestore archives sync failed:', error));
   }, [archives, isInitialized]);
 
   useEffect(() => {
     if (!isInitialized) return;
     localStorage.setItem(`${STORAGE_KEY_PREFIX}minutes`, JSON.stringify(meetingMinutes));
+    void replaceRecords('meeting_minutes', meetingMinutes).catch(error => console.error('Firestore minutes sync failed:', error));
   }, [meetingMinutes, isInitialized]);
 
   useEffect(() => {
     if (!isInitialized) return;
     localStorage.setItem(`${STORAGE_KEY_PREFIX}kpis`, JSON.stringify(kpis));
+    void replaceRecords('kpis', kpis).catch(error => console.error('Firestore KPIs sync failed:', error));
   }, [kpis, isInitialized]);
 
   useEffect(() => {
     if (!isInitialized) return;
     localStorage.setItem(`${STORAGE_KEY_PREFIX}audit_logs`, JSON.stringify(auditLogs));
+    void replaceRecords('audit_logs', auditLogs).catch(error => console.error('Firestore audit logs sync failed:', error));
   }, [auditLogs, isInitialized]);
 
   useEffect(() => {
     if (!isInitialized) return;
     localStorage.setItem(`${STORAGE_KEY_PREFIX}chat`, JSON.stringify(chatMessages));
+    void replaceRecords('chat_messages', chatMessages).catch(error => console.error('Firestore chat sync failed:', error));
   }, [chatMessages, isInitialized]);
 
   useEffect(() => {
@@ -855,6 +888,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     if (!isInitialized) return;
     localStorage.setItem(`${STORAGE_KEY_PREFIX}app_tiles`, JSON.stringify(appTiles));
+    void replaceRecords('app_tiles', appTiles).catch(error => console.error('Firestore app tiles sync failed:', error));
   }, [appTiles, isInitialized]);
 
   // Action Plans: Delete (Admin Henok Akalu full control)
